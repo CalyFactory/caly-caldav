@@ -36,6 +36,7 @@ class CaldavClient:
             client = self
         )
         self.principal = principal
+        return principal
     
     def setPrincipal(self, principal):
         self.principal = self.Principal(
@@ -105,6 +106,7 @@ class CaldavClient:
                 client = self.client
             )
             self.homeset = homeset
+            return homeset
         
         def isListHasChanges(self, calendarList):
             newCalendarList = self.getCalendars()
@@ -156,8 +158,9 @@ class CaldavClient:
                     client = self.client
                 )
                 calendarList.append(calendar)
-                self.calendarList = calendarList
-
+            self.calendarList = calendarList
+            return calendarList
+            
 
     class Calendar:
         """
@@ -181,6 +184,12 @@ class CaldavClient:
             self.domainUrl = self.hostname + calendarUrl
             self.client = client
             self.eventList = None
+
+
+        def isChanged(self):
+            oldcTag = self.cTag 
+            newcTag = self.getCTag()
+            return oldcTag != newcTag
         
         def getAllEvent(self):
             if self.eventList is None:
@@ -211,9 +220,8 @@ class CaldavClient:
 
             #save event data
             self.eventList = eventList
+            return eventList
 
-
-        ## TODO - ctag만 불러올 수 있는 쿼리 찾아보기
         def getCTag(self):
             ## load ctag
             ret = util.requestData(
@@ -222,6 +230,11 @@ class CaldavClient:
                 data = static.XML_REQ_CALENDARCTAG,
                 auth = self.client.auth
             )
+
+            xmlTree = util.XmlObject(ret.content)
+            cTag = xmlTree.find("response").find("propstat").find("prop").find("getctag").text()
+
+            return cTag
 
     class Event:
         def __init__(self, eventUrl, eTag):

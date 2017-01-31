@@ -57,7 +57,7 @@ EVENT
 
 """
 
-"""
+
 
 ## 주기적 동기화 
 
@@ -71,6 +71,8 @@ client = (
     .setHomeSet("home_set_cal_url")  #db 에서 로드 
     .setCalendars("calendarList")       #db에서 로드해서 list calendar object 로 삽입
 )
+
+"""
 list calendar object 만드는법 
 calendarList = []
 for i in db.inter()
@@ -81,17 +83,50 @@ for i in db.inter()
     )
     calendarList.append(calendar)
 
+https://caldav.icloud.com:443/8171895891/principal/
+https://p51-caldav.icloud.com:443/8171895891/calendars/
+/8171895891/calendars/home/
 """
 
 
 """test code """
 
+
+calendars = client.getPrincipal().getHomeSet().getCalendars()
+
+## 주기적으로 돌면서 diff 체크 
+while True:
+    print("start sync")
+
+    ##동기화할 캘린더 선택 
+    calendarToSync = calendars[0]
+    if calendarToSync.isChanged():
+        print("something changed")
+        newEventList = calendarToSync.updateAllEvent()
+        oldEventList = [] #db에서 이전 event리스트들을 불러옴 
+        eventDiff = util.diffEvent(newEventList, oldEventList)
+
+        
+        print("add : " + str(eventDiff.added()))
+        print("removed : " + str(eventDiff.removed()))
+        print("changed : " + str(eventDiff.changed()))
+        print("unchanged : " + str(eventDiff.unchanged()))
+    else:
+        print("nothing changed")
+
+    
+
+    time.sleep(10)
+
+
+"""
+
 calendarList=[]
 calendarList.append(
     CaldavClient.Calendar(
-        calendarUrl = "",
-        calendarName = "",
-        cTag = ""
+        calendarUrl = "/caldav/jspiner/calendar/25443380/",
+        calendarName = "내 캘린더",
+        cTag = "2017-01-24 21:15:19"
     )
 )
 
@@ -105,8 +140,4 @@ client = (
     .setCalendars(calendarList)       #db에서 로드해서 list calendar object 로 삽입
 )
 
-
-while True:
-    print("start sync")
-
-    time.sleep(10)
+"""

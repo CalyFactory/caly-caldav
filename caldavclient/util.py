@@ -36,6 +36,7 @@ def splitIdfromUrl(url):
     if url[-1] == "/":
         url = url[:-1]
     return url.split('/')[-1]    
+
 class XmlObject:
 
     def __init__(self, xml = None):
@@ -111,7 +112,7 @@ def findCalendar(key, list):
         if calendar.calendarUrl == key:
             return calendar
 
-def diffCalendar(oldList, newList):
+def diffCalendars(oldList, newList):
     diffList = []
     for calendar in oldList:
         newCalendar = findCalendar(calendar.calendarUrl, newList)
