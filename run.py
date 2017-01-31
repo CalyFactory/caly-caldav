@@ -36,7 +36,7 @@ def routeCalendar():
     for calendar in calendars:
 #        print(calendar.calendarName + " " + calendar.calendarUrl + " " + calendar.cTag)
         calendarList+= "<input type=checkbox name=chk_info value='%s'>%s" % (calendar.calendarUrl, calendar.calendarName) + "</br>"
-
+    
 
     return render_template('calendar.html', calendarList = calendars)
 
