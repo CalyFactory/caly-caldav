@@ -30,6 +30,8 @@ def mixHostUrl(hostname, url):
         return hostname + url
 
 def splitIdfromUrl(url):
+    if len(url) < 1:
+        return url
     url = url.replace('.ics', '')
     if url[-1] == "/":
         url = url[:-1]

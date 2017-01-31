@@ -56,6 +56,18 @@ class CaldavClient:
             )
         return self
             
+    def setCalendars(self, calendarList):
+        if self.principal == None:
+            raise Exception('principal is not inited')
+        elif self.principal.homeset == None:
+            raise Exception('homeset is not inited')
+        else:
+            for calendar in calendarList:
+                calendar.hostname = self.principal.homeset.hostname
+                calendar.domainUrl = calendar.hostname + calendar.calendarUrl
+                calendar.client = self 
+            self.principal.homeset.calendarList = calendarList 
+        return self 
 
     class Principal:
         
@@ -148,24 +160,23 @@ class CaldavClient:
 
 
     class Calendar:
-        
+        """
         def __init__(self, calendarUrl, calendarName, cTag):
-#            self.hostname = util.getHostnameFromUrl(client.hostname)
+#            self.hostname = util.getHostnameFromUrl(hostname)
+            self.calendarId = util.splitIdfromUrl(calendarUrl)
             self.calendarUrl = calendarUrl
             self.calendarName = calendarName
             self.cTag = cTag
-            self.eventList = []
 #            self.domainUrl = self.hostname + calendarUrl
 #            self.client = client
-            self.client = None 
-        
+            self.eventList = None
+        """
 
-        def __init__(self, hostname, calendarUrl, calendarName, cTag, client):
+        def __init__(self, calendarUrl, calendarName, cTag, client = None, hostname = None):
             self.hostname = util.getHostnameFromUrl(hostname)
             self.calendarId = util.splitIdfromUrl(calendarUrl)
             self.calendarUrl = calendarUrl
             self.calendarName = calendarName
-            self.eventList = []
             self.cTag = cTag
             self.domainUrl = self.hostname + calendarUrl
             self.client = client

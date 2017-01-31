@@ -2,6 +2,7 @@ from caldavclient import CaldavClient
 import json 
 import time 
 from caldavclient import util
+import time
 
 with open('key.json') as json_data:
     d = json.load(json_data)
@@ -56,7 +57,7 @@ EVENT
 
 """
 
-
+"""
 
 ## 주기적 동기화 
 
@@ -70,7 +71,6 @@ client = (
     .setHomeSet("home_set_cal_url")  #db 에서 로드 
     .setCalendars("calendarList")       #db에서 로드해서 list calendar object 로 삽입
 )
-"""
 list calendar object 만드는법 
 calendarList = []
 for i in db.inter()
@@ -82,3 +82,31 @@ for i in db.inter()
     calendarList.append(calendar)
 
 """
+
+
+"""test code """
+
+calendarList=[]
+calendarList.append(
+    CaldavClient.Calendar(
+        calendarUrl = "",
+        calendarName = "",
+        cTag = ""
+    )
+)
+
+client = (
+    CaldavClient(
+        hostname,
+        userId,
+        userPw
+    ).setPrincipal("https://caldav.calendar.naver.com:443/principals/users/jspiner")   #db 에서 로드 
+    .setHomeSet("https://caldav.calendar.naver.com:443/principals/users/jspiner/")  #db 에서 로드 
+    .setCalendars(calendarList)       #db에서 로드해서 list calendar object 로 삽입
+)
+
+
+while True:
+    print("start sync")
+
+    time.sleep(10)
