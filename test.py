@@ -20,7 +20,6 @@ client = CaldavClient(
 
 principal = client.getPrincipal()
 homeset = principal.getHomeSet()
-
 calendars = homeset.getCalendars()
 
 for calendar in calendars:
