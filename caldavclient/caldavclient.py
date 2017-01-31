@@ -36,6 +36,26 @@ class CaldavClient:
             client = self
         )
         self.principal = principal
+    
+    def setPrincipal(self, principal):
+        self.principal = self.Principal(
+            hostname = self.hostname,
+            principalUrl = principal,
+            client = self
+        )
+        return self
+    
+    def setHomeSet(self, homeset):
+        if self.principal == None:
+            raise Exception('principal is not inited')
+        else:
+            self.principal.homeset = self.HomeSet(
+                hostname = self.principal.hostname,
+                homesetUrl = homeset,
+                client = self
+            )
+        return self
+            
 
     class Principal:
         
@@ -128,18 +148,21 @@ class CaldavClient:
 
 
     class Calendar:
-        """ TODO - 왠지 이유가 있어서 만들었는데 기억도 안나고 아무데서도 안쓰네?
-        def __init__(self, calendarUrl, cTag, client):
-            self.hostname = util.getHostnameFromUrl(client.hostname)
+        
+        def __init__(self, calendarUrl, calendarName, cTag):
+#            self.hostname = util.getHostnameFromUrl(client.hostname)
             self.calendarUrl = calendarUrl
+            self.calendarName = calendarName
             self.cTag = cTag
             self.eventList = []
-            self.domainUrl = self.hostname + calendarUrl
-            self.client = client
-        """
+#            self.domainUrl = self.hostname + calendarUrl
+#            self.client = client
+            self.client = None 
+        
 
         def __init__(self, hostname, calendarUrl, calendarName, cTag, client):
             self.hostname = util.getHostnameFromUrl(hostname)
+            self.calendarId = util.splitIdfromUrl(calendarUrl)
             self.calendarUrl = calendarUrl
             self.calendarName = calendarName
             self.eventList = []
@@ -192,4 +215,5 @@ class CaldavClient:
     class Event:
         def __init__(self, eventUrl, eTag):
             self.eventUrl = eventUrl
+            self.eventId = util.splitIdfromUrl(eventUrl)
             self.eTag = eTag

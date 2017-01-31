@@ -29,6 +29,11 @@ def mixHostUrl(hostname, url):
     else:
         return hostname + url
 
+def splitIdfromUrl(url):
+    url = url.replace('.ics', '')
+    if url[-1] == "/":
+        url = url[:-1]
+    return url.split('/')[-1]    
 class XmlObject:
 
     def __init__(self, xml = None):
