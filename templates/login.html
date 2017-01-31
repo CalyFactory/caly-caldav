@@ -46,7 +46,6 @@
 
     function addUser() {
         $.redirectPost("/calendar", {hostname: hostname.val(), userId: name.val(), userPw: password.val()});
-        alert(name.val())
     }
  
     dialog = $( "#dialog-form" ).dialog({
@@ -76,7 +75,7 @@
     });
     $( "#btn2" ).button().on( "click", function() { // naver
         tips.text("naver")
-        hostname.val("https://caldav.calendar.naver.com")
+        hostname.val("https://caldav.calendar.naver.com/principals/users/jspiner")
       dialog.dialog( "open" );
     });
     $( "#btn3" ).button().on( "click", function() { //apple 
