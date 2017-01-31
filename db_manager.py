@@ -39,6 +39,19 @@ def printAllEvent():
 		print(row)
 		print(type(row))
 
+def initInsertCalendars(client, principal, homeset, calendar_list):
+	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)
+	result = db_connector.query("INSERT INTO account VALUES (%s, %s, %s, %s)",(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl))
+
+	for calendar in calendar_list:
+		result2 = db_connector.query("INSERT INTO calendar VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, calendar.calendarName, calendar.cTag))
+
+		evt_list = calendar.getAllEvent()
+
+		for evt in evt_list:
+			result3 = db_connector.query("INSERT INTO event (host_name, user_id, calendar_id, event_id, e_tag) VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eTag))
+"""	
+
 homeset_cal_id="https://p58-caldav.icloud.com/10836055664/calendars/"
 cal_id="home/"
 
@@ -46,3 +59,4 @@ ics_ls=[]
 ics_ls.append("159EBF61-05FB-457F-BAE2-5C4A2EE85322.ics")
 ics_ls.append("80D1290F-1647-48E4-A85B-A5746188BA80.ics")
 extractEvent(homeset_cal_id, cal_id,ics_ls)
+"""
