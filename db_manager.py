@@ -70,11 +70,26 @@ def printAllEvent():
 		print(row)
 		print(type(row))
 
+def selectAllAccount():
+	result=db_connector.query("select * from account")
+	rows=util.fetch_all_json(result)
+	return rows
+
+def selectCalendars(host_name, user_id):
+	result=db_connector.query("select * from calendar where host_name = %s and user_id = %s", (host_name, user_id))
+	rows=util.fetch_all_json(result)
+	return rows
+
 def selectAllCalendar():
 	result=db_connector.query("select * from calendar natural join account")
 	rows=util.fetch_all_json(result)
 	return rows
 	
+def selectEvents(host_name, user_id, calendar_id):
+	result=db_connector.query("select * from event where host_name = %s and user_id = %s and calendar_id= %s", (host_name, user_id, calendar_id))
+	rows=util.fetch_all_json(result)
+	return rows
+
 
 def initInsertCalendars(client, principal, homeset, calendar_list):
 	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)
@@ -86,7 +101,7 @@ def initInsertCalendars(client, principal, homeset, calendar_list):
 		evt_list = calendar.getAllEvent()
 
 		for evt in evt_list:
-			result3 = db_connector.query("INSERT INTO event (host_name, user_id, calendar_id, event_id, e_tag) VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eTag))
+			result3 = db_connector.query("INSERT INTO event (host_name, user_id, calendar_id, event_id, event_url, e_tag) VALUES (%s, %s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eventUrl, evt.eTag))
 
 """ MOUDULE TESTER for extractEvent
 homeset_cal_id="https://p58-caldav.icloud.com/10836055664/calendars/"

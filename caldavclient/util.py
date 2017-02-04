@@ -1,6 +1,10 @@
+import sys
+# Add the ptdraft folder path to the sys.path list
+
 import requests
 from urllib.parse import urlparse
 from xml.etree.ElementTree import *
+from caldavclient import caldavclient
 
 def requestData(method = "PROPFIND", hostname = "", depth = 0, data = "", auth = ("","")):
     response = requests.request(
@@ -106,6 +110,17 @@ def eventListToDict(eventList):
     for event in eventList:
         eventDict[event.eventUrl] = event.eTag
     return eventDict
+
+def eventRowToList(eventRow):
+    eventList = []
+    for row in eventRow:
+        event = caldavclient.CaldavClient.Event(
+            eventUrl = row['event_url'],
+            eTag = row['e_tag']
+        )
+        eventList.append(event)
+    return eventList
+
 
 def findCalendar(key, list):
     for calendar in list:
