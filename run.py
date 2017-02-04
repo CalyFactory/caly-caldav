@@ -38,6 +38,7 @@ def routeCalendar():
         calendarList+= "<input type=checkbox name=chk_info value='%s'>%s" % (calendar.calendarUrl, calendar.calendarName) + "</br>"
 
     db_manager.initInsertCalendars(client, principal, homeset, calendars)
+    
 
     return render_template('calendar.html', calendarList = calendars)
 

@@ -6,7 +6,6 @@ import requests
 import os
 
 def extractEvent(homeset_cal_id, cal_id, ics_list):
-	evt_list=[]
 	path=os.getcwd()+"/" # Declare for generate ics file path
 	# Get auth
 	res = db_connector.query("select user_base64,user_id,host_name from account where host_name=%s",(homeset_cal_id,))
@@ -16,40 +15,33 @@ def extractEvent(homeset_cal_id, cal_id, ics_list):
 	user_id = rows[0]['user_id']
 	host_name = rows[0]['host_name']
 	Auth="Basic "+rows[0]['user_base64']
-	# loop 
-	""" """
+	
 	for ics in ics_list:
 		# file open
 		url_resp = requests.request("GET",homeset_cal_id+cal_id+ics,headers={"Depth":"1","Authorization":Auth})
 		ics_data = str(url_resp.text)
 		
-		#print("EVT_NAME :",ics_data[ics_data.find("SUMMARY:")+8:ics_data.find("DTSTART;")])
+		# Get Basic Info
 		evt_name = ics_data[ics_data.find("SUMMARY:")+8:ics_data.find("DTSTART;")]
-		#print("EVT_START_TIME :",ics_data[ics_data.find("DTSTART;")+8:ics_data.find("DTSTAMP:")])
 		evt_start_dt = ics_data[ics_data.find("DTSTART;")+8:ics_data.find("DTSTAMP:")]
-		#print("EVT_END_TIME :",ics_data[ics_data.find("DTEND;")+6:ics_data.find("SUMMARY:")])
 		evt_end_dt = ics_data[ics_data.find("DTEND;")+6:ics_data.find("SUMMARY:")]
 		
 		# Convert dt from ICS to DB format
 		evt_start_dt = dtConverter(evt_start_dt)
 		evt_end_dt = dtConverter(evt_end_dt)
 
+		# Duplicated data remove from ics file
 		evt_loc = None
 		tmp_ics_data = ics_data.replace("-LOCATION","") # Except X-LIC-LOCATION id column
 		if tmp_ics_data.find("LOCATION:") is not -1:
-			#print("EVT_LOCATION :",tmp_ics_data[tmp_ics_data.find("LOCATION:")+9:tmp_ics_data.find("SEQUENCE:")])
 			evt_loc = tmp_ics_data[tmp_ics_data.find("LOCATION:")+9:tmp_ics_data.find("SEQUENCE:")]
 		  
+
+		# DB Update
 		if evt_loc is not None:
 			evt_query = db_connector.query("UPDATE event SET event_name=%s,location=%s,start_dt=%s,end_dt=%s WHERE host_name=%s and user_id=%s and calendar_id=%s and event_id=%s",(evt_name, evt_loc, evt_start_dt, evt_end_dt, host_name, user_id, cal_id, ics))
 		else:
 			evt_query = db_connector.query("UPDATE event SET event_name=%s,location=null,start_dt=%s,end_dt=%s WHERE host_name=%s and user_id=%s and calendar_id=%s and event_id=%s",(evt_name, evt_start_dt, evt_end_dt, host_name, user_id, cal_id, ics))
-	#print("WHERE")
-		# generate data (event name, dt:start~end, location)
-		
-		# remove file
-		# print()
-	return evt_list
 
 def dtConverter(dt_ics):
 	# Mysql Date time format :  1000-01-01 00:00:00

@@ -3,11 +3,17 @@ import json
 import time 
 from caldavclient import util
 import time
+from slackclient import SlackClient
+
 
 with open('key.json') as json_data:
     d = json.load(json_data)
     userId = d['naver']['id']
     userPw = d['naver']['pw']
+    bot_token = d['bot_token']
+
+slackClient = SlackClient(bot_token)
+
 
 #hostname = "https://caldav.icloud.com"
 hostname = "https://caldav.calendar.naver.com/principals/users/jspiner"
@@ -60,7 +66,7 @@ EVENT
 
 
 ## 주기적 동기화 
-
+"""
 #client 객체에 db에서 데이터를 불러와 넣어줌 
 client = (
     CaldavClient(
@@ -71,7 +77,7 @@ client = (
     .setHomeSet("home_set_cal_url")  #db 에서 로드 
     .setCalendars("calendarList")       #db에서 로드해서 list calendar object 로 삽입
 )
-
+"""
 """
 list calendar object 만드는법 
 calendarList = []
@@ -91,8 +97,37 @@ https://p51-caldav.icloud.com:443/8171895891/calendars/
 
 """test code """
 
+calendarList=[]
+calendarList.append(calendars[0])
+"""
+    CaldavClient.Calendar(
+        calendarUrl = "/caldav/jspiner/calendar/25443380/",
+        calendarName = "내 캘린더",
+        cTag = "2017-01-24 21:15:19"
+    )
+"""
+
+
+client = (
+    CaldavClient(
+        hostname,
+        userId,
+        userPw
+    ).setPrincipal("https://caldav.calendar.naver.com:443/principals/users/jspiner")   #db 에서 로드 
+    .setHomeSet("https://caldav.calendar.naver.com:443/principals/users/jspiner/")  #db 에서 로드 
+    .setCalendars(calendarList)       #db에서 로드해서 list calendar object 로 삽입
+)
 
 calendars = client.getPrincipal().getHomeSet().getCalendars()
+
+def sendMessage(text):
+    slackClient.api_call(
+        "chat.postMessage",
+        channel="#testbed",
+        text=text,
+        username='hotsan', 
+        icon_emoji=':robot_face:'
+    )
 
 ## 주기적으로 돌면서 diff 체크 
 while True:
@@ -102,9 +137,17 @@ while True:
     calendarToSync = calendars[0]
     if calendarToSync.isChanged():
         print("something changed")
+        oldEventList = calendarToSync.getAllEvent() #db에서 이전 event리스트들을 불러옴 
         newEventList = calendarToSync.updateAllEvent()
-        oldEventList = [] #db에서 이전 event리스트들을 불러옴 
-        eventDiff = util.diffEvent(newEventList, oldEventList)
+        eventDiff = util.diffEvent(oldEventList, newEventList)
+
+        text = ""
+        if len(eventDiff.added()) != 0:
+            sendMessage("일정이 추가되었다.")
+        if len(eventDiff.removed()) !=0:
+            sendMessage("일정이 삭제되었다.")
+        if len(eventDiff.changed()) !=0:
+            sendMessage("일정이 변경되었다.")
 
         
         print("add : " + str(eventDiff.added()))
