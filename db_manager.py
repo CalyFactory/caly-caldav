@@ -5,8 +5,33 @@ import json
 import requests
 import os
 
+# Update Calendar (C tag, E tag, and All change things about event)
+def updateCalendar(homeset_cal_id, cal_id, add_ics_list, update_ics_list, delete_ics_list):
+	# Get auth
+	res = db_connector.query("select user_base64,user_id,host_name from account where host_name=%s",(homeset_cal_id,))
+	rows = util.fetch_all_json(res)
+	if rows[0]['user_base64'] is None:
+		return #handle error message
+	user_id = rows[0]['user_id']
+	host_name = rows[0]['host_name']
+	Auth="Basic "+rows[0]['user_base64']
+	headers={"Depth":"1","Authorization":Auth}
+	
+	# Add event
+	if add_ics_list is not None:
+		addEvent()
+	# Update event (Overwrite)
+	if update_ics_list is not None:
+		extractEvent(calendar_url, update_ics_list)
+	# Delete event
+	if delete_ics_list is not None:
+		delteEvent(delete_ics_list)
+
+# Add event
+def addEvent()
+
+# Update event name, start/end time, location from requesting ics file
 def extractEvent(homeset_cal_id, cal_id, ics_list):
-	path=os.getcwd()+"/" # Declare for generate ics file path
 	# Get auth
 	res = db_connector.query("select user_base64,user_id,host_name from account where host_name=%s",(homeset_cal_id,))
 	rows = util.fetch_all_json(res)
