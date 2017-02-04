@@ -70,6 +70,12 @@ def printAllEvent():
 		print(row)
 		print(type(row))
 
+def selectAllCalendar():
+	result=db_connector.query("select * from calendar natural join account")
+	rows=util.fetch_all_json(result)
+	return rows
+	
+
 def initInsertCalendars(client, principal, homeset, calendar_list):
 	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)
 	result = db_connector.query("INSERT INTO account VALUES (%s, %s, %s, %s)",(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl))
