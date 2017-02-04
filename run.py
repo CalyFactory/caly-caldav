@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask import Response
 from flask import request
 from caldavclient import CaldavClient
-
+import db_manager
 app = Flask(__name__)
 
 
@@ -37,6 +37,8 @@ def routeCalendar():
 #        print(calendar.calendarName + " " + calendar.calendarUrl + " " + calendar.cTag)
         calendarList+= "<input type=checkbox name=chk_info value='%s'>%s" % (calendar.calendarUrl, calendar.calendarName) + "</br>"
 
+
+    db_manager.initInsertCalendars(client, principal, homeset, calendars)
 
     return render_template('calendar.html', calendarList = calendars)
 
