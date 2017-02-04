@@ -1,5 +1,5 @@
 from common.connector import db_connector
-from common import util
+from caldavclient import util
 
 import json
 import requests
@@ -92,9 +92,15 @@ def selectEvents(host_name, user_id, calendar_id):
 
 def updateCTag(host_name, user_id, calendar_id, c_tag):
 	result=db_connector.query("update calendar set c_tag = %s where host_name=%s and user_id = %s and calendar_id = %s", (c_tag, host_name, user_id, calendar_id))
-	
+
+def addEvent(host_name, user_id, calendar_id, event_url, e_tag):
+	result = db_connector.query("insert into event (host_name, user_id, calendar_id, event_id, event_url, e_tag) values (%s, %s, %s, %s, %s, %s)", (host_name, user_id, calendar_id, util.splitIdfromUrl(event_url), event_url, e_tag))
+
 def updateEvent(host_name, user_id, calendar_id, event_url, e_tag):
 	result = db_connector.query("update event set e_tag = %s where host_name=%s and user_id = %s and calendar_id = %s and event_url = %s", (e_tag, host_name, user_id, calendar_id, event_url))
+
+def deleteEvent(host_name, user_id, calendar_id, event_url):
+	result = db_connector.query("delete from event where host_name=%s and user_id = %s and calendar_id = %s and event_url = %s", (host_name, user_id, calendar_id, event_url))
 
 def initInsertCalendars(client, principal, homeset, calendar_list):
 	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)
