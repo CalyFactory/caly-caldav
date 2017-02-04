@@ -75,7 +75,7 @@ def initInsertCalendars(client, principal, homeset, calendar_list):
 	result = db_connector.query("INSERT INTO account VALUES (%s, %s, %s, %s)",(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl))
 
 	for calendar in calendar_list:
-		result2 = db_connector.query("INSERT INTO calendar VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, calendar.calendarName, calendar.cTag))
+		result2 = db_connector.query("INSERT INTO calendar VALUES (%s, %s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, calendar.calendarUrl, calendar.calendarName, calendar.cTag))
 
 		evt_list = calendar.getAllEvent()
 
