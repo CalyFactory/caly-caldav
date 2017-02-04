@@ -121,6 +121,12 @@ def eventRowToList(eventRow):
         eventList.append(event)
     return eventList
 
+def findETag(eventList, eventUrl):
+    for event in eventList:
+        if event.eventUrl == eventUrl:
+            if event.eTag is None:
+                return ""
+            return event.eTag
 
 def findCalendar(key, list):
     for calendar in list:

@@ -90,6 +90,11 @@ def selectEvents(host_name, user_id, calendar_id):
 	rows=util.fetch_all_json(result)
 	return rows
 
+def updateCTag(host_name, user_id, calendar_id, c_tag):
+	result=db_connector.query("update calendar set c_tag = %s where host_name=%s and user_id = %s and calendar_id = %s", (c_tag, host_name, user_id, calendar_id))
+	
+def updateEvent(host_name, user_id, calendar_id, event_url, e_tag):
+	result = db_connector.query("update event set e_tag = %s where host_name=%s and user_id = %s and calendar_id = %s and event_url = %s", (e_tag, host_name, user_id, calendar_id, event_url))
 
 def initInsertCalendars(client, principal, homeset, calendar_list):
 	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)

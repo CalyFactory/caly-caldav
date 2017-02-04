@@ -49,15 +49,54 @@ while True:
 
                 eventDiff = util.diffEvent(oldEventList, newEventList)
 
+
                 #각각 추가삭제변경된 일정은 eventDiff.added(), removed(), changed()에서 리스트로 가져올 수 있음.
                 print(eventDiff.added())
-                print(eventDiff.removed())
+                print(eventDiff.removed())  
                 if len(eventDiff.added()) != 0:
                     print("일정이 추가되었다.")
                 if len(eventDiff.removed()) !=0:
                     print("일정이 삭제되었다.")
                 if len(eventDiff.changed()) !=0:
                     print("일정이 변경되었다.") 
+
+                # db update 
+                db_manager.updateCTag(
+                    account['host_name'],
+                    account['user_id'],
+                    calendar.calendarId,
+                    calendar.cTag
+                )
+
+                for eventId in eventDiff.added():
+                    db_manager.updateEvent(
+                        account['host_name'],
+                        account['user_id'],
+                        calendar.calendarId,
+                        eventId,
+                        util.findETag(newEventList, eventId)
+                    )
+
+                for eventId in eventDiff.removed():
+                    db_manager.updateEvent(
+                        account['host_name'],
+                        account['user_id'],
+                        calendar.calendarId,
+                        eventId,
+                        util.findETag(oldEventList, eventId)
+                    )
+
+                for eventId in eventDiff.changed():
+                    db_manager.updateEvent(
+                        account['host_name'],
+                        account['user_id'],
+                        calendar.calendarId,
+                        eventId,
+                        util.findETag(newEventList, eventId)
+                    )
+                
+
+                
 
 
     time.sleep(10)
