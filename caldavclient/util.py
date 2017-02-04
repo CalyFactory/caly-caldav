@@ -1,6 +1,12 @@
+import sys
+# Add the ptdraft folder path to the sys.path list
+
 import requests
 from urllib.parse import urlparse
 from xml.etree.ElementTree import *
+from caldavclient import caldavclient
+from datetime import datetime
+import json
 
 def requestData(method = "PROPFIND", hostname = "", depth = 0, data = "", auth = ("","")):
     response = requests.request(
@@ -12,7 +18,7 @@ def requestData(method = "PROPFIND", hostname = "", depth = 0, data = "", auth =
         },
         auth = auth 
     )
-
+    
     if response.status_code<200 or response.status_code>299:
         raise Exception('http code error' + str(response.status_code))
 
@@ -107,6 +113,23 @@ def eventListToDict(eventList):
         eventDict[event.eventUrl] = event.eTag
     return eventDict
 
+def eventRowToList(eventRow):
+    eventList = []
+    for row in eventRow:
+        event = caldavclient.CaldavClient.Event(
+            eventUrl = row['event_url'],
+            eTag = row['e_tag']
+        )
+        eventList.append(event)
+    return eventList
+
+def findETag(eventList, eventUrl):
+    for event in eventList:
+        if event.eventUrl == eventUrl:
+            if event.eTag is None:
+                return ""
+            return event.eTag
+
 def findCalendar(key, list):
     for calendar in list:
         if calendar.calendarUrl == key:
@@ -125,3 +148,21 @@ def diffEvent(oldList, newList):
         eventListToDict(oldList), 
         eventListToDict(newList)
     )
+
+def fetch_all_json(result):
+  lis = []
+
+  for row in result.fetchall():
+    i =0
+    dic = {}  
+    
+    for data in row:
+      if type(data) == datetime:
+        dic[result.keys()[i]]= str(data)
+      else:
+        dic[result.keys()[i]]= data
+      if i == len(row)-1:
+        lis.append(dic)
+
+      i=i+1
+  return lis
