@@ -12,7 +12,7 @@ def requestData(method = "PROPFIND", hostname = "", depth = 0, data = "", auth =
         },
         auth = auth 
     )
-
+    
     if response.status_code<200 or response.status_code>299:
         raise Exception('http code error' + str(response.status_code))
 
