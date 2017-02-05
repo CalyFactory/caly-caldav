@@ -75,7 +75,7 @@ while True:
                         util.findETag(newEventList, eventId)
                     )
                 
-                for eventId in eventDiff.removed():
+                for eventId in eventDiff.changed():
                     db_manager.updateEvent(
                         account['host_name'],
                         account['user_id'],
@@ -84,7 +84,7 @@ while True:
                         util.findETag(oldEventList, eventId)
                     )
 
-                for eventId in eventDiff.changed():
+                for eventId in eventDiff.removed():
                     db_manager.deleteEvent(
                         account['host_name'],
                         account['user_id'],
