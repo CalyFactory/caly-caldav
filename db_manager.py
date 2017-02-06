@@ -36,7 +36,7 @@ def addEvent(homeset_cal_id,cal_id, user_id, ics_ls, req_headers):
 		# INSERT INTO event (host_name, user_id, calendar_id, event_id, e_tag) VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eTag))
 		""" HOW INPUT E TAG INFO AFTER GET?
 		TO-DO: FIX CALENDAR, EVENT CLASS
-		
+
 		if evt_loc is not None:
 			#evt_query = db_connector.query("INSERT INTO event VALUES (%s, %s, %s, %s, %s,%s, %s, %s, %s)",(homeset_cal_id, user_id, cal_id, ics, )
 			pass
@@ -102,13 +102,15 @@ def dtConverter(dt_ics):
 
 	return dt_db_date+" "+dt_db_time
 
-def printAllEvent():
+def getAllEvent():
 	result=db_connector.query("select * from event")
 	rows=util.fetch_all_json(result)
 
 	for row in rows:
 		print(row)
 		print(type(row))
+
+	return rows
 
 def initInsertCalendars(client, principal, homeset, calendar_list):
 	#print(client.hostname, client.auth[0], client.auth[1], homeset.homesetUrl)
@@ -118,11 +120,14 @@ def initInsertCalendars(client, principal, homeset, calendar_list):
 		result2 = db_connector.query("INSERT INTO calendar VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, calendar.calendarName, calendar.cTag))
 
 		evt_list = calendar.getAllEvent()
-
+		req_headers={"Depth":"1","Authorization":client.auth[0]}
+		
 		for evt in evt_list:
-			result3 = db_connector.query("INSERT INTO event (host_name, user_id, calendar_id, event_id, e_tag) VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eTag))
+			if evt.eventId.find(".ics"):
+				evt_name, evt_start_dt, evt_end_dt, evt_loc = icsParser(client.hostname, calendar.calendarId, evt.eventId, req_headers)
+				result3 = db_connector.query("INSERT INTO event VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt_name, evt_start_dt, evt_end_dt, evt_loc, evt.eTag))
 
-""" MOUDULE TESTER for extractEvent """
+""" MOUDULE TESTER for extractEvent 
 homeset_cal_id="https://p58-caldav.icloud.com/10836055664/calendars/"
 cal_id="home/"
 user_id="line_plus@naver.com"
@@ -133,3 +138,4 @@ ics_ls.append("80D1290F-1647-48E4-A85B-A5746188BA80.ics")
 addEvent(homeset_cal_id,cal_id, user_id, ics_ls)
 extractEvent(homeset_cal_id, cal_id,ics_ls)
 #deleteEvent(ics_ls)
+"""
