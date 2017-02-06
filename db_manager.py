@@ -131,6 +131,7 @@ def initInsertCalendars(client, principal, homeset, calendar_list):
 homeset_cal_id="https://p58-caldav.icloud.com/10836055664/calendars/"
 cal_id="home/"
 user_id="line_plus@naver.com"
+user_bs="bGluZV9wbHVzQG5hdmVyLmNvbTpRV0UwOThxd2U="
 ics_ls=[]
 ics_ls.append("159EBF61-05FB-457F-BAE2-5C4A2EE85322.ics")
 ics_ls.append("80D1290F-1647-48E4-A85B-A5746188BA80.ics")
