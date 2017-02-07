@@ -35,7 +35,7 @@ def addEvent(homeset_cal_id,cal_id, user_id, ics_ls, req_headers):
 
 		# DB Insert
 		# INSERT INTO event (host_name, user_id, calendar_id, event_id, e_tag) VALUES (%s, %s, %s, %s, %s)",(client.hostname, client.auth[0], calendar.calendarId, evt.eventId, evt.eTag))
-		""" HOW INPUT E TAG INFO AFTER GET?
+		# HOW INPUT E TAG INFO AFTER GET?
 		TO-DO: FIX CALENDAR, EVENT CLASS
 
 		if evt_loc is not None:
@@ -43,8 +43,7 @@ def addEvent(homeset_cal_id,cal_id, user_id, ics_ls, req_headers):
 			pass
 		else:
 			evt_query = db_connector.query("UPDATE event SET event_name=%s,location=null,start_dt=%s,end_dt=%s WHERE host_name=%s and user_id=%s and calendar_id=%s and event_id=%s",(evt_name, evt_start_dt, evt_end_dt, host_name, user_id, cal_id, ics))
-		"""
-
+		
 def deleteEvent(ics_list):
 	for ics in ics_list:
 		db_connector.query("DELETE FROM event WHERE event_id=%s",(ics,))
