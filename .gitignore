@@ -2,3 +2,4 @@ __pycache__
 calyenv
 conf.json
 key.json
+test_ics.py
